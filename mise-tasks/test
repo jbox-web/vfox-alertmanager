@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE description="Run plugin tests - install and execute tool"
+set -euo pipefail
+
+mise plugin link --force alertmanager .
+mise cache clear
+mise install alertmanager@0.31.1
+
+# Capture and display the output while also verifying it
+output=$(mise exec "alertmanager@0.31.1" -- "alertmanager" --version)
+echo "alertmanager output: ${output}"
+
+if echo "${output}" | grep -q '0.31.1'; then
+  echo "✓ Tests passed"
+else
+  echo "✗ Test failed: expected version alertmanager@0.31.1"
+  exit 1
+fi
